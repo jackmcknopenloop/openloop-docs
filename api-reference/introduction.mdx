@@ -1,33 +1,72 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'Partners API Reference'
+description: 'Complete API documentation for the Partners Patient Management System'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to Partners API
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The Partners API is a comprehensive patient management system designed for healthcare applications. It provides secure endpoints for managing patient data, including personal information, contact details, and medical records.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Partners API Endpoints"
+  icon="users"
+  href="https://github.com/your-org/partners-api/blob/main/api-reference/openapi.json"
 >
-  View the OpenAPI specification file
+  View the complete OpenAPI specification
 </Card>
+
+## Key Features
+
+- **Patient Management**: Create, read, update, and delete patient records
+- **Search & Filtering**: Advanced search capabilities across patient data
+- **Data Validation**: Comprehensive validation using JSON Schema
+- **Authentication**: Secure API access with multiple authentication methods
+- **System Monitoring**: Health check and API information endpoints
+
+## Available Endpoints
+
+### Patient Management
+- **List Patients**: `GET /patients` - Retrieve all patients with search and pagination
+- **Create Patient**: `POST /patients` - Add new patient records
+- **Get Patient**: `GET /patients/{id}` - Retrieve specific patient by ID
+- **Update Patient**: `PUT /patients/{id}` - Update patient data
+
+### System Endpoints
+- **Health Check**: `GET /health` - Monitor API status and connectivity
+- **API Information**: `GET /` - Get system information and available endpoints
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+The Partners API supports two authentication methods:
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+### API Key Authentication
+```bash
+curl -H "x-api-key: your-api-key" \
+  https://partners-api-sigma.vercel.app/patients
 ```
+
+### Bearer Token Authentication
+```bash
+curl -H "Authorization: Bearer your-token" \
+  https://partners-api-sigma.vercel.app/patients
+```
+
+## Base URL
+
+- **Production**: `https://partners-api-sigma.vercel.app`
+
+## Rate Limits
+
+- **Standard**: 1000 requests per hour
+- **Burst**: 100 requests per minute
+
+## Getting Started
+
+1. **Obtain API Credentials**: Contact your administrator for API keys
+2. **Test Connection**: Use the health check endpoint to verify connectivity
+3. **Explore Endpoints**: Start with listing patients to understand the data structure
+4. **Create Patients**: Use the create endpoint to add new patient records
+
+<Note>
+  This API is designed for healthcare applications and includes sensitive patient data. Ensure you follow all applicable privacy regulations (HIPAA, GDPR, etc.) when implementing.
+</Note>

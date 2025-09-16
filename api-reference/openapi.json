@@ -1,58 +1,198 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Partners API",
+    "description": "Mock Patients API for testing and development. Provides comprehensive patient management endpoints with authentication and validation.",
     "license": {
       "name": "MIT"
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://partners-api-sigma.vercel.app",
+      "description": "Production server"
     }
   ],
   "security": [
+    {
+      "apiKeyAuth": []
+    },
     {
       "bearerAuth": []
     }
   ],
   "paths": {
-    "/plants": {
+    "/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "description": "Health check endpoint",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "ts": {
+                      "type": "integer",
+                      "description": "Unix timestamp"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "description": "Get API information and available endpoints",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "API information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "Partners API"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.1.0"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "active"
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    },
+                    "endpoints": {
+                      "type": "object"
+                    },
+                    "authentication": {
+                      "type": "object"
+                    },
+                    "documentation": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients": {
+      "get": {
+        "description": "List all patients with optional filtering and pagination",
+        "tags": ["Patients"],
         "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query to filter patients by email, firstName, lastName, or phone",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "Maximum number of results to return",
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of results to skip",
+            "schema": {
+              "type": "integer",
+              "default": 0
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "List of patients",
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of patients matching the query"
+                    },
+                    "items": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                        "$ref": "#/components/schemas/Patient"
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Authentication token missing or invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "payment_required": {
+                    "summary": "Payment Required",
+                    "value": {
+                      "error": "ValidationError",
+                      "message": "Invalid input data",
+                      "details": [
+                        {
+                          "field": "email",
+                          "issue": "Invalid email format"
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -60,13 +200,213 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "description": "Create a new patient",
+        "tags": ["Patients"],
         "requestBody": {
-          "description": "Plant to add to the store",
+          "description": "Patient data",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/PatientInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Patient created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Patient"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation error or invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "validation_error": {
+                    "summary": "Validation Error",
+                    "value": {
+                      "error": "ValidationError",
+                      "message": "Invalid input data",
+                      "details": [
+                        {
+                          "field": "email",
+                          "issue": "Invalid email format"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Authentication token missing or invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "payment_required": {
+                    "summary": "Payment Required",
+                    "value": {
+                      "error": "ValidationError",
+                      "message": "Invalid input data",
+                      "details": [
+                        {
+                          "field": "email",
+                          "issue": "Invalid email format"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{id}": {
+      "get": {
+        "description": "Get a specific patient by ID",
+        "tags": ["Patients"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Patient"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Patient does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not_found": {
+                    "summary": "Patient Not Found",
+                    "value": {
+                      "error": "NotFound",
+                      "message": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Authentication token missing or invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "payment_required": {
+                    "summary": "Payment Required",
+                    "value": {
+                      "error": "ValidationError",
+                      "message": "Invalid input data",
+                      "details": [
+                        {
+                          "field": "email",
+                          "issue": "Invalid email format"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Update a patient",
+        "tags": ["Patients"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updated patient data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientInput"
               }
             }
           },
@@ -74,17 +414,17 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Patient updated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/Patient"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Validation error",
             "content": {
               "application/json": {
                 "schema": {
@@ -92,61 +432,69 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
           },
-          "400": {
-            "description": "unexpected error",
+          "404": {
+            "description": "Not Found - Patient does not exist",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not_found": {
+                    "summary": "Patient Not Found",
+                    "value": {
+                      "error": "NotFound",
+                      "message": "Resource not found"
+                    }
+                  }
                 }
               }
             }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Authentication token missing or invalid"
+                    }
+                  }
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "payment_required": {
+                    "summary": "Payment Required",
+                    "value": {
+                      "error": "ValidationError",
+                      "message": "Invalid input data",
+                      "details": [
+                        {
+                          "field": "email",
+                          "issue": "Invalid email format"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -154,63 +502,303 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "Patient": {
         "type": "object",
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "phone",
+          "birthDate",
+          "gender",
+          "sex",
+          "locations"
+        ],
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": {
+            "type": "string",
+            "description": "Unique patient identifier"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Patient's email address",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Patient's first name",
+            "minLength": 1
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Patient's middle name"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Patient's last name",
+            "minLength": 1
+          },
+          "phone": {
+            "type": "string",
+            "description": "Patient's phone number",
+            "pattern": "^[\\d\\s\\-\\(\\)\\+]+$",
+            "minLength": 5
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Patient's birth date in YYYY-MM-DD format",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "description": "Patient's gender identity"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "description": "Patient's biological sex"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "nullable": true,
+            "description": "Patient's preferred language"
+          },
+          "locations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            },
+            "description": "Patient's addresses"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "description": "Patient tags for categorization"
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "PatientInput": {
+        "type": "object",
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "phone",
+          "birthDate",
+          "gender",
+          "sex",
+          "locations"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Patient's email address",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+          "firstName": {
+            "type": "string",
+            "description": "Patient's first name",
+            "minLength": 1
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Patient's middle name"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Patient's last name",
+            "minLength": 1
+          },
+          "phone": {
+            "type": "string",
+            "description": "Patient's phone number",
+            "pattern": "^[\\d\\s\\-\\(\\)\\+]+$",
+            "minLength": 5
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Patient's birth date in YYYY-MM-DD format",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "description": "Patient's gender identity"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "description": "Patient's biological sex"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "nullable": true,
+            "description": "Patient's preferred language"
+          },
+          "locations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            },
+            "description": "Patient's addresses"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "description": "Patient tags for categorization"
           }
-        ]
+        }
+      },
+      "Location": {
+        "type": "object",
+        "required": [
+          "addressLine1",
+          "city",
+          "state",
+          "country",
+          "zipCode",
+          "default",
+          "type"
+        ],
+        "properties": {
+          "addressLine1": {
+            "type": "string",
+            "description": "Primary address line",
+            "minLength": 1
+          },
+          "addressLine2": {
+            "type": "string",
+            "nullable": true,
+            "description": "Secondary address line"
+          },
+          "city": {
+            "type": "string",
+            "description": "City name",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "description": "State or province",
+            "minLength": 1
+          },
+          "country": {
+            "type": "string",
+            "description": "Country code (2 letters)",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "ZIP or postal code",
+            "minLength": 1
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Whether this is the default address"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["shipping", "billing"],
+            "description": "Type of address"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "required": [
+          "type",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["employer", "operational"],
+            "description": "Type of tag"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tag name",
+            "minLength": 1
+          }
+        }
       },
       "Error": {
+        "type": "object",
         "required": [
           "error",
           "message"
         ],
-        "type": "object",
         "properties": {
           "error": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string",
+            "description": "Error code",
+            "enum": [
+              "BadRequest",
+              "Unauthorized",
+              "Forbidden",
+              "NotFound",
+              "ValidationError",
+              "InternalServerError",
+              "ServiceUnavailable"
+            ],
+            "example": "ValidationError"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "Invalid input data"
+          },
+          "details": {
+            "type": "array",
+            "description": "Array of validation error details",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "issue"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field that caused the validation error",
+                  "example": "email"
+                },
+                "issue": {
+                  "type": "string",
+                  "description": "Description of the validation issue",
+                  "example": "Invalid email format"
+                }
+              }
+            }
           }
         }
       }
     },
     "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key authentication"
+      },
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "description": "Bearer token authentication"
       }
     }
   }
