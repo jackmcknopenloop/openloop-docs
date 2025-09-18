@@ -1,0 +1,57 @@
+---
+title: 'Data Standards'
+description: 'Formatting and validation standards for the OpenLoop Health Partners API'
+mode: 'wide'
+---
+
+Our API follows strict formatting standards to ensure data consistency and validation across all endpoints.
+
+<Tabs>
+  <Tab title="Contact Information">
+    <Card title="Phone Numbers" icon="phone">
+      **Pattern**: `^[\d\s\-\(\)\+]+$`  
+      **Min Length**: 5 characters
+      
+      **Examples:**
+      - `+1-555-123-4567`
+      - `(555) 123-4567`
+      - `555.123.4567`
+    </Card>
+    
+    <Card title="Email Addresses" icon="envelope">
+      **Pattern**: `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+      
+      **Examples:**
+      - `user@example.com`
+      - `john.doe@company.org`
+      - `test+tag@domain.co.uk`
+    </Card>
+  </Tab>
+  
+  <Tab title="Dates">
+    <Card title="Date Format" icon="calendar">
+      **Format**: `YYYY-MM-DD` (ISO 8601)
+      **Pattern**: `^\d{4}-\d{2}-\d{2}$`
+      
+      **Examples:**
+      - `1990-07-22`
+      - `2024-01-15`
+      - `2000-12-31`
+    </Card>
+    
+    <Card title="Country Codes" icon="globe">
+      **Format**: 2-letter ISO country code
+      **Length**: Exactly 2 characters
+      **Case**: Uppercase
+      
+      **Examples:**
+      - `US` (United States)
+      - `CA` (Canada)
+      - `MX` (Mexico)
+    </Card>
+  </Tab>
+</Tabs>
+
+<InfoBox>
+  **Validation Errors**: When validation fails, the API returns a `ValidationError` with detailed field-level information in the `details` array.
+</InfoBox>

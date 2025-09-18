@@ -1,72 +1,63 @@
 ---
-title: 'Partners API Reference'
-description: 'Complete API documentation for the Partners Patient Management System'
+title: 'API Overview'
+description: 'Everything you need to know about the OpenLoop Partners API'
 ---
 
-## Welcome to Partners API
+This API lets you integrate your healthcare platform with OpenLoop's clinical services. Think of it as your bridge to offer specialized medical programs to your patients.
 
-The Partners API is a comprehensive patient management system designed for healthcare applications. It provides secure endpoints for managing patient data, including personal information, contact details, and medical records.
+## What You Can Do
 
-<Card
-  title="Partners API Endpoints"
-  icon="users"
-  href="https://github.com/your-org/partners-api/blob/main/api-reference/openapi.json"
->
-  View the complete OpenAPI specification
-</Card>
+<CardGroup cols={2}>
+  <Card title="Manage Patients" icon="users">
+    Create and update patient records with all the info you need
+  </Card>
+  <Card title="Browse Programs" icon="list">
+    See what medical programs are available (35+ specialties!)
+  </Card>
+  <Card title="Enroll Patients" icon="user-plus">
+    Get your patients signed up for the care they need
+  </Card>
+  <Card title="Track Everything" icon="chart-line">
+    Monitor enrollments and patient progress
+  </Card>
+</CardGroup>
 
-## Key Features
+## Quick Start
 
-- **Patient Management**: Create, read, update, and delete patient records
-- **Search & Filtering**: Advanced search capabilities across patient data
-- **Data Validation**: Comprehensive validation using JSON Schema
-- **Authentication**: Secure API access with multiple authentication methods
-- **System Monitoring**: Health check and API information endpoints
+Ready to dive in? Here's the typical flow:
 
-## Available Endpoints
+1. **Check the API** - Make sure everything's working
+2. **Create a patient** - Add them to your system
+3. **Browse programs** - See what's available
+4. **Enroll them** - Get them signed up for care
 
-### Patient Management
-- **List Patients**: `GET /patients` - Retrieve all patients with search and pagination
-- **Create Patient**: `POST /patients` - Add new patient records
-- **Get Patient**: `GET /patients/{id}` - Retrieve specific patient by ID
-- **Update Patient**: `PUT /patients/{id}` - Update patient data
 
-### System Endpoints
-- **Health Check**: `GET /health` - Monitor API status and connectivity
-- **API Information**: `GET /` - Get system information and available endpoints
+## Data Standards
+
+Our API follows strict formatting standards to ensure data consistency and validation. See our comprehensive [Data Standards](/api-reference/data-standards) guide for detailed formatting rules, validation patterns, and examples for all field types.
 
 ## Authentication
 
-The Partners API supports two authentication methods:
+Choose what works best for you:
 
-### API Key Authentication
-```bash
+<CodeGroup>
+```bash API Key
 curl -H "x-api-key: your-api-key" \
   https://partners-api-sigma.vercel.app/patients
 ```
 
-### Bearer Token Authentication
-```bash
+```bash Bearer Token
 curl -H "Authorization: Bearer your-token" \
   https://partners-api-sigma.vercel.app/patients
 ```
+</CodeGroup>
 
-## Base URL
+## Need Help?
 
-- **Production**: `https://partners-api-sigma.vercel.app`
-
-## Rate Limits
-
-- **Standard**: 1000 requests per hour
-- **Burst**: 100 requests per minute
-
-## Getting Started
-
-1. **Obtain API Credentials**: Contact your administrator for API keys
-2. **Test Connection**: Use the health check endpoint to verify connectivity
-3. **Explore Endpoints**: Start with listing patients to understand the data structure
-4. **Create Patients**: Use the create endpoint to add new patient records
+- **Quick Start Guide** - Get up and running in minutes
+- **Development Guide** - Best practices and examples
+- **Contact Support** - We're here to help!
 
 <Note>
-  This API is designed for healthcare applications and includes sensitive patient data. Ensure you follow all applicable privacy regulations (HIPAA, GDPR, etc.) when implementing.
+All our providers are licensed across all 50 states, so your patients can get care no matter where they are.
 </Note>
