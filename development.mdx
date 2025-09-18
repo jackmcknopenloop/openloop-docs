@@ -1,0 +1,56 @@
+---
+title: 'Development'
+description: 'Development guidelines and best practices'
+---
+
+# Development Guide
+
+This guide covers development best practices and guidelines for working with the Partners API.
+
+## Environment Setup
+
+### Development Environment
+
+For development, use the production server:
+- **Base URL**: `https://partners-api-sigma.vercel.app`
+
+### Testing
+
+Always test your integration thoroughly before going to production.
+
+## Rate Limits
+
+- **Rate Limit**: 1000 requests per hour per API key
+- **Burst Limit**: 100 requests per minute
+
+## Error Handling
+
+The API returns standard HTTP status codes:
+
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `404` - Not Found
+- `422` - Validation Error
+- `500` - Internal Server Error
+
+## Best Practices
+
+1. **Always handle errors gracefully**
+2. **Implement proper retry logic**
+3. **Cache responses when appropriate**
+4. **Use pagination for large datasets**
+5. **Validate input data before sending**
+
+## SDKs and Libraries
+
+Currently, we provide:
+- REST API endpoints
+- OpenAPI specification for code generation
+
+## Support
+
+For development support:
+- Email: [Support](mailto:hi@mintlify.com)
+- API Playground: [https://partners-api-sigma.vercel.app](https://partners-api-sigma.vercel.app)

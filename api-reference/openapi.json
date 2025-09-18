@@ -498,6 +498,323 @@
           }
         }
       }
+    },
+    "/patients/seed": {
+      "post": {
+        "description": "Seed random patients for testing and development",
+        "tags": ["Patients"],
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Number of patients to create (1-500, default: 10)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patients seeded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "inserted": {
+                      "type": "integer",
+                      "description": "Number of patients created"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/patients/reset": {
+      "post": {
+        "description": "Reset all patients data (development only)",
+        "tags": ["Patients"],
+        "responses": {
+          "200": {
+            "description": "Patients data reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "Reset operation status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/programs": {
+      "get": {
+        "description": "List all available programs",
+        "tags": ["Programs"],
+        "security": [{"apiKeyAuth": []}, {"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "List of programs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Program"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/patients/{patientId}/enrollments": {
+      "get": {
+        "description": "Get all enrollments for a specific patient",
+        "tags": ["Enrollments"],
+        "security": [{"apiKeyAuth": []}, {"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Patient identifier"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of patient enrollments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Enrollment"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new enrollment for a patient",
+        "tags": ["Enrollments"],
+        "security": [{"apiKeyAuth": []}, {"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Patient identifier"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrollmentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Enrollment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Enrollment identifier"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Enrollment status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/patients/{patientId}/enrollments/reactivate": {
+      "post": {
+        "description": "Reactivate an existing enrollment for a patient",
+        "tags": ["Enrollments"],
+        "security": [{"apiKeyAuth": []}, {"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Patient identifier"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrollmentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Enrollment reactivated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Enrollment identifier"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Enrollment status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/patients/{patientId}/enrollments/seed": {
+      "post": {
+        "description": "Seed random enrollments for a patient",
+        "tags": ["Enrollments"],
+        "security": [{"apiKeyAuth": []}, {"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Patient identifier"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "number",
+                    "description": "Number of enrollments to create",
+                    "default": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enrollments seeded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "enrollments": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -507,10 +824,10 @@
         "required": [
           "id",
           "email",
-          "firstName",
-          "lastName",
+          "first_name",
+          "last_name",
           "phone",
-          "birthDate",
+          "birth_date",
           "gender",
           "sex",
           "locations"
@@ -526,17 +843,17 @@
             "description": "Patient's email address",
             "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
           },
-          "firstName": {
+          "first_name": {
             "type": "string",
             "description": "Patient's first name",
             "minLength": 1
           },
-          "middleName": {
+          "middle_name": {
             "type": "string",
             "nullable": true,
             "description": "Patient's middle name"
           },
-          "lastName": {
+          "last_name": {
             "type": "string",
             "description": "Patient's last name",
             "minLength": 1
@@ -547,7 +864,7 @@
             "pattern": "^[\\d\\s\\-\\(\\)\\+]+$",
             "minLength": 5
           },
-          "birthDate": {
+          "birth_date": {
             "type": "string",
             "format": "date",
             "description": "Patient's birth date in YYYY-MM-DD format",
@@ -563,7 +880,7 @@
             "enum": ["male", "female", "other"],
             "description": "Patient's biological sex"
           },
-          "preferredLanguage": {
+          "preferred_language": {
             "type": "string",
             "nullable": true,
             "description": "Patient's preferred language"
@@ -589,10 +906,10 @@
         "type": "object",
         "required": [
           "email",
-          "firstName",
-          "lastName",
+          "first_name",
+          "last_name",
           "phone",
-          "birthDate",
+          "birth_date",
           "gender",
           "sex",
           "locations"
@@ -604,17 +921,17 @@
             "description": "Patient's email address",
             "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
           },
-          "firstName": {
+          "first_name": {
             "type": "string",
             "description": "Patient's first name",
             "minLength": 1
           },
-          "middleName": {
+          "middle_name": {
             "type": "string",
             "nullable": true,
             "description": "Patient's middle name"
           },
-          "lastName": {
+          "last_name": {
             "type": "string",
             "description": "Patient's last name",
             "minLength": 1
@@ -625,7 +942,7 @@
             "pattern": "^[\\d\\s\\-\\(\\)\\+]+$",
             "minLength": 5
           },
-          "birthDate": {
+          "birth_date": {
             "type": "string",
             "format": "date",
             "description": "Patient's birth date in YYYY-MM-DD format",
@@ -641,7 +958,7 @@
             "enum": ["male", "female", "other"],
             "description": "Patient's biological sex"
           },
-          "preferredLanguage": {
+          "preferred_language": {
             "type": "string",
             "nullable": true,
             "description": "Patient's preferred language"
@@ -666,21 +983,21 @@
       "Location": {
         "type": "object",
         "required": [
-          "addressLine1",
+          "address_line_1",
           "city",
           "state",
           "country",
-          "zipCode",
+          "zip_code",
           "default",
           "type"
         ],
         "properties": {
-          "addressLine1": {
+          "address_line_1": {
             "type": "string",
             "description": "Primary address line",
             "minLength": 1
           },
-          "addressLine2": {
+          "address_line_2": {
             "type": "string",
             "nullable": true,
             "description": "Secondary address line"
@@ -701,7 +1018,7 @@
             "minLength": 2,
             "maxLength": 2
           },
-          "zipCode": {
+          "zip_code": {
             "type": "string",
             "description": "ZIP or postal code",
             "minLength": 1
@@ -735,6 +1052,83 @@
             "minLength": 1
           }
         }
+      },
+      "Program": {
+        "type": "object",
+        "required": ["id", "name", "abbreviated_name"],
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Program identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Program full name"
+          },
+          "abbreviated_name": {
+            "type": "string",
+            "description": "Program abbreviated name"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Enrollment": {
+        "type": "object",
+        "required": ["id", "status", "latest_payment_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Enrollment identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Program name (required for active enrollments)"
+          },
+          "abbreviated_name": {
+            "type": "string",
+            "description": "Program abbreviated name (required for active enrollments)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "in_review", "disabled"],
+            "description": "Enrollment status"
+          },
+          "latest_payment_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Latest payment date in YYYY-MM-dd format"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Enrollment start date in yyyy-MM-dd format (required for active enrollments)"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Enrollment end date in yyyy-MM-dd format"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EnrollmentInput": {
+        "type": "object",
+        "required": ["program_id", "stripe_customer_id", "stripe_product_id"],
+        "properties": {
+          "program_id": {
+            "type": "number",
+            "description": "Program identifier to enroll in"
+          },
+          "stripe_customer_id": {
+            "type": "string",
+            "description": "Stripe customer ID"
+          },
+          "stripe_product_id": {
+            "type": "string",
+            "description": "Stripe product ID"
+          }
+        },
+        "additionalProperties": false
       },
       "Error": {
         "type": "object",
@@ -781,6 +1175,90 @@
                   "type": "string",
                   "description": "Description of the validation issue",
                   "example": "Invalid email format"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Unauthorized - Invalid or missing authentication",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "unauthorized": {
+                "summary": "Unauthorized",
+                "value": {
+                  "error": "Unauthorized",
+                  "message": "Authentication token missing or invalid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not Found - Resource does not exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "not_found": {
+                "summary": "Resource Not Found",
+                "value": {
+                  "error": "NotFound",
+                  "message": "Resource not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "description": "Bad Request - Invalid request data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "bad_request": {
+                "summary": "Bad Request",
+                "value": {
+                  "error": "BadRequest",
+                  "message": "Invalid request data"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Unprocessable Entity - Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "validation_error": {
+                "summary": "Validation Error",
+                "value": {
+                  "error": "ValidationError",
+                  "message": "Invalid input data",
+                  "details": [
+                    {
+                      "field": "email",
+                      "issue": "Invalid email format"
+                    }
+                  ]
                 }
               }
             }

@@ -1,0 +1,41 @@
+---
+title: 'Quickstart'
+description: 'Get up and running with the Partners API in minutes'
+---
+
+# Quickstart Guide
+
+Welcome to the Partners API! This guide will help you get started quickly.
+
+## Prerequisites
+
+- API Key or Bearer Token
+- Basic understanding of REST APIs
+
+## Getting Started
+
+1. **Obtain your API credentials**
+2. **Make your first API call**
+3. **Explore the available endpoints**
+
+## Authentication
+
+The API supports two authentication methods:
+
+- **API Key**: Include `x-api-key` header
+- **Bearer Token**: Include `Authorization: Bearer <token>` header
+
+## First API Call
+
+Let's start with a simple health check:
+
+```bash
+curl -H "x-api-key: YOUR_API_KEY" \
+     https://partners-api-sigma.vercel.app/health
+```
+
+## Next Steps
+
+- Explore the [API Reference](/api-reference/introduction)
+- Check out the [Patient Endpoints](/api-reference/endpoint/list-patients)
+- Learn about [Programs](/api-reference/endpoint/list-programs)

@@ -53,10 +53,32 @@
             ]
           },
           {
+            "group": "Program Endpoints",
+            "pages": [
+              "api-reference/endpoint/list-programs"
+            ]
+          },
+          {
+            "group": "Enrollment Endpoints",
+            "pages": [
+              "api-reference/endpoint/list-patient-enrollments",
+              "api-reference/endpoint/create-patient-enrollment",
+              "api-reference/endpoint/reactivate-patient-enrollment"
+            ]
+          },
+          {
             "group": "System Endpoints",
             "pages": [
               "api-reference/endpoint/health",
               "api-reference/endpoint/webhook"
+            ]
+          },
+          {
+            "group": "Development Tools",
+            "pages": [
+              "api-reference/endpoint/seed-patients",
+              "api-reference/endpoint/reset-patients",
+              "api-reference/endpoint/seed-patient-enrollments"
             ]
           }
         ]
