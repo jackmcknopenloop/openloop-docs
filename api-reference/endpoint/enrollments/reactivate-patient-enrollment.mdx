@@ -1,0 +1,12 @@
+---
+title: 'Reactivate Patient Enrollment'
+openapi: 'POST /patients/{patientId}/enrollments/reactivate'
+---
+
+Reactivate a previously disabled or expired enrollment via the OpenLoop Health Partners API. Restores access to healthcare programs for patients with suspended enrollments.
+
+**Required Fields:**
+- `program_id` - Program ID to reactivate
+- `stripe_customer_id` - Updated Stripe customer ID
+- `stripe_product_id` - Updated Stripe product ID
+

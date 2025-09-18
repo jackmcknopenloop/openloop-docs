@@ -10,59 +10,60 @@
   "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
-      {
-        "tab": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart",
-          "development"
-        ]
-      },
+        {
+          "tab": "Getting Started",
+          "pages": [
+            "index",
+            "quickstart",
+            "best-practices"
+          ]
+        },
       {
         "tab": "API Reference",
         "groups": [
           {
             "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/data-standards"
             ]
           },
           {
             "group": "Patients",
             "pages": [
-              "api-reference/endpoint/list-patients",
-              "api-reference/endpoint/create-patient",
-              "api-reference/endpoint/get-patient",
-              "api-reference/endpoint/update-patient"
+              "api-reference/endpoint/patients/list-patients",
+              "api-reference/endpoint/patients/create-patient",
+              "api-reference/endpoint/patients/get-patient",
+              "api-reference/endpoint/patients/update-patient"
             ]
           },
           {
             "group": "Programs",
             "pages": [
-              "api-reference/endpoint/list-programs"
+              "api-reference/endpoint/programs/list-programs"
             ]
           },
           {
             "group": "Enrollments",
             "pages": [
-              "api-reference/endpoint/list-patient-enrollments",
-              "api-reference/endpoint/create-patient-enrollment",
-              "api-reference/endpoint/reactivate-patient-enrollment"
+              "api-reference/endpoint/enrollments/list-patient-enrollments",
+              "api-reference/endpoint/enrollments/create-patient-enrollment",
+              "api-reference/endpoint/enrollments/reactivate-patient-enrollment"
             ]
           },
           {
             "group": "System",
             "pages": [
-              "api-reference/endpoint/health",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/system/health",
+              "api-reference/endpoint/system/webhook"
             ]
           },
           {
             "group": "Development",
             "pages": [
-              "api-reference/endpoint/seed-patients",
-              "api-reference/endpoint/reset-patients",
-              "api-reference/endpoint/seed-patient-enrollments"
+              "api-reference/endpoint/development/seed-patients",
+              "api-reference/endpoint/development/reset-patients",
+              "api-reference/endpoint/development/seed-patient-enrollments"
             ]
           }
         ]

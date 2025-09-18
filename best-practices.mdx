@@ -1,0 +1,599 @@
+---
+title: 'Best Practices'
+description: 'Best practices, error handling, and integration patterns for the OpenLoop Partners API'
+---
+
+## Building Production-Ready Integrations
+
+You've got the basics down. Now let's make your integration bulletproof with proper error handling, performance optimization, and security best practices that will scale with your practice.
+
+## Environment Configuration
+
+### API Endpoints
+
+<Tabs>
+  <Tab title="Production" icon="globe">
+    **Base URL**: `https://partners-api-sigma.vercel.app`  
+    Use this for live integrations with real patient data
+  </Tab>
+  <Tab title="Staging" icon="flask">
+    **Base URL**: `https://staging-partners-api-sigma.vercel.app`  
+    Use this for testing and development with safe test data
+  </Tab>
+</Tabs>
+
+### Authentication
+
+Choose the authentication method that best fits your security requirements:
+
+<CodeGroup>
+```javascript JavaScript
+// API Key Authentication (Recommended for server-to-server)
+const response = await fetch('https://partners-api-sigma.vercel.app/patients', {
+  method: 'GET',
+  headers: {
+    'x-api-key': 'your-api-key-here',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+
+// Bearer Token Authentication (For OAuth2 flows)
+const response = await fetch('https://partners-api-sigma.vercel.app/patients', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer your-bearer-token-here',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+# API Key Authentication (Recommended for server-to-server)
+response = requests.get(
+    'https://partners-api-sigma.vercel.app/patients',
+    headers={
+        'x-api-key': 'your-api-key-here',
+        'Content-Type': 'application/json'
+    }
+)
+
+data = response.json()
+
+# Bearer Token Authentication (For OAuth2 flows)
+response = requests.get(
+    'https://partners-api-sigma.vercel.app/patients',
+    headers={
+        'Authorization': 'Bearer your-bearer-token-here',
+        'Content-Type': 'application/json'
+    }
+)
+
+data = response.json()
+```
+
+```bash cURL
+# API Key Authentication
+curl -H "x-api-key: your-api-key-here" \
+     -H "Content-Type: application/json" \
+     https://partners-api-sigma.vercel.app/patients
+
+# Bearer Token Authentication
+curl -H "Authorization: Bearer your-bearer-token-here" \
+     -H "Content-Type: application/json" \
+     https://partners-api-sigma.vercel.app/patients
+```
+</CodeGroup>
+
+## Rate Limits & Performance
+
+### Current Limits
+
+- **Rate Limit**: 1,000 requests per hour per API key
+- **Burst Limit**: 100 requests per minute
+- **Concurrent Requests**: 10 simultaneous requests
+
+### Implementing Rate Limiting
+
+<CodeGroup>
+```javascript JavaScript
+class RateLimiter {
+  constructor(requestsPerMinute = 100) {
+    this.requests = [];
+    this.limit = requestsPerMinute;
+  }
+
+  async waitIfNeeded() {
+    const now = Date.now();
+    const oneMinuteAgo = now - 60000;
+    
+    // Remove requests older than 1 minute
+    this.requests = this.requests.filter(time => time > oneMinuteAgo);
+    
+    if (this.requests.length >= this.limit) {
+      const oldestRequest = Math.min(...this.requests);
+      const waitTime = 60000 - (now - oldestRequest);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    this.requests.push(now);
+  }
+
+  async makeRequest(url, options = {}) {
+    await this.waitIfNeeded();
+    
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'x-api-key': 'your-api-key-here',
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    return response;
+  }
+}
+
+// Usage example
+const limiter = new RateLimiter(100);
+const response = await limiter.makeRequest('https://partners-api-sigma.vercel.app/patients');
+```
+
+```python Python
+import time
+import asyncio
+from typing import List
+import aiohttp
+
+class RateLimiter:
+    def __init__(self, requests_per_minute: int = 100):
+        self.requests: List[float] = []
+        self.limit = requests_per_minute
+
+    async def wait_if_needed(self):
+        now = time.time()
+        one_minute_ago = now - 60
+        
+        # Remove requests older than 1 minute
+        self.requests = [req_time for req_time in self.requests if req_time > one_minute_ago]
+        
+        if len(self.requests) >= self.limit:
+            oldest_request = min(self.requests)
+            wait_time = 60 - (now - oldest_request)
+            await asyncio.sleep(wait_time)
+        
+        self.requests.append(now)
+
+    async def make_request(self, url: str, **kwargs):
+        await self.wait_if_needed()
+        
+        headers = {
+            'x-api-key': 'your-api-key-here',
+            'Content-Type': 'application/json',
+            **kwargs.get('headers', {})
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as response:
+                return await response.json()
+
+# Usage example
+limiter = RateLimiter(100)
+data = await limiter.make_request('https://partners-api-sigma.vercel.app/patients')
+```
+</CodeGroup>
+
+## Error Handling
+
+### HTTP Status Codes
+
+The API uses standard HTTP status codes with detailed error responses:
+
+<CardGroup cols={2}>
+  <Card title="2xx Success" icon="check">
+    - `200` - OK (GET, PUT)  
+    - `201` - Created (POST)  
+    - `204` - No Content (DELETE)
+  </Card>
+  <Card title="4xx Client Errors" icon="exclamation-triangle">
+    - `400` - Bad Request  
+    - `401` - Unauthorized  
+    - `404` - Not Found  
+    - `422` - Validation Error
+  </Card>
+</CardGroup>
+
+### Error Response Format
+
+All error responses follow a consistent format. The `details` array is only present for validation errors:
+
+<CodeGroup>
+```json Validation Error
+{
+  "error": "ValidationError",
+  "message": "Invalid input data",
+  "details": [
+    {
+      "field": "email",
+      "issue": "Invalid email format"
+    }
+  ]
+}
+```
+
+```json Unauthorized Error
+{
+  "error": "Unauthorized",
+  "message": "Authentication token missing or invalid"
+}
+```
+
+```json Not Found Error
+{
+  "error": "NotFound",
+  "message": "Resource not found"
+}
+```
+
+```json Bad Request Error
+{
+  "error": "BadRequest",
+  "message": "Invalid request data"
+}
+```
+</CodeGroup>
+
+**Error Types:**
+- `BadRequest` - Invalid request data
+- `Unauthorized` - Missing or invalid authentication
+- `Forbidden` - Access denied
+- `NotFound` - Resource does not exist
+- `ValidationError` - Input validation failed (includes `details` array)
+- `InternalServerError` - Server error
+- `ServiceUnavailable` - Service temporarily unavailable
+
+### Implementing Robust Error Handling
+
+<CodeGroup>
+```javascript JavaScript
+async function handleApiCall(apiFunction) {
+  try {
+    const response = await apiFunction();
+    return { success: true, data: response };
+  } catch (error) {
+    if (error.response) {
+      // API returned an error response
+      const { status, data } = error.response;
+      
+      switch (status) {
+        case 401:
+          // Handle authentication errors
+          throw new Error('Invalid API credentials');
+        case 422:
+          // Handle validation errors
+          return { 
+            success: false, 
+            errors: data.details,
+            message: data.message 
+          };
+        case 429:
+          // Handle rate limiting
+          throw new Error('Rate limit exceeded. Please retry later.');
+        default:
+          throw new Error(`API Error: ${data.message || 'Unknown error'}`);
+      }
+    } else {
+      // Network or other error
+      throw new Error('Network error. Please check your connection.');
+    }
+  }
+}
+```
+
+```python Python
+import requests
+from typing import Dict, Any, Optional
+
+def handle_api_call(api_function):
+    try:
+        response = api_function()
+        return {"success": True, "data": response}
+    except requests.exceptions.HTTPError as error:
+        # API returned an error response
+        status = error.response.status_code
+        data = error.response.json()
+        
+        if status == 401:
+            # Handle authentication errors
+            raise Exception("Invalid API credentials")
+        elif status == 422:
+            # Handle validation errors
+            return {
+                "success": False,
+                "errors": data.get("details", []),
+                "message": data.get("message", "")
+            }
+        elif status == 429:
+            # Handle rate limiting
+            raise Exception("Rate limit exceeded. Please retry later.")
+        else:
+            raise Exception(f"API Error: {data.get('message', 'Unknown error')}")
+    except requests.exceptions.RequestException:
+        # Network or other error
+        raise Exception("Network error. Please check your connection.")
+```
+</CodeGroup>
+
+
+## Integration Patterns
+
+### Retry Logic with Exponential Backoff
+
+<CodeGroup>
+```javascript JavaScript
+// Generic retry function
+async function retryApiCall(apiFunction, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      
+      // Don't retry on client errors (4xx)
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        throw error;
+      }
+      
+      // Exponential backoff: 1s, 2s, 4s
+      const delay = Math.pow(2, attempt - 1) * 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+
+// Webhook retry implementation
+class WebhookRetryHandler {
+  constructor(maxRetries = 5, baseDelay = 1000) {
+    this.maxRetries = maxRetries;
+    this.baseDelay = baseDelay;
+  }
+
+  async sendWebhook(url, payload, headers = {}) {
+    const sendWebhook = async () => {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook failed: ${response.status} ${response.statusText}`);
+      }
+
+      return response;
+    };
+
+    return await retryApiCall(sendWebhook, this.maxRetries);
+  }
+
+  async processWebhookEvent(event) {
+    try {
+      // Process the webhook event
+      console.log('Processing webhook event:', event.type);
+      
+      // Your webhook processing logic here
+      await this.handleEvent(event);
+      
+      return { success: true, eventId: event.id };
+    } catch (error) {
+      console.error('Webhook processing failed:', error);
+      throw error;
+    }
+  }
+
+  async handleEvent(event) {
+    // Implement your webhook event handling logic
+    switch (event.type) {
+      case 'patient.created':
+        // Handle patient creation
+        break;
+      case 'enrollment.updated':
+        // Handle enrollment update
+        break;
+      default:
+        console.log('Unknown event type:', event.type);
+    }
+  }
+}
+
+// Usage example
+const webhookHandler = new WebhookRetryHandler();
+await webhookHandler.processWebhookEvent({
+  id: 'evt_123',
+  type: 'patient.created',
+  data: { patientId: 'pat_456' }
+});
+```
+
+```python Python
+import asyncio
+import time
+import json
+from typing import Callable, Any, Dict
+import aiohttp
+
+# Generic retry function
+async def retry_api_call(api_function: Callable, max_retries: int = 3) -> Any:
+    for attempt in range(1, max_retries + 1):
+        try:
+            return await api_function()
+        except Exception as error:
+            if attempt == max_retries:
+                raise error
+            
+            # Don't retry on client errors (4xx)
+            if hasattr(error, 'response') and error.response.status_code >= 400 and error.response.status_code < 500:
+                raise error
+            
+            # Exponential backoff: 1s, 2s, 4s
+            delay = 2 ** (attempt - 1)
+            await asyncio.sleep(delay)
+
+# Webhook retry implementation
+class WebhookRetryHandler:
+    def __init__(self, max_retries: int = 5, base_delay: int = 1000):
+        self.max_retries = max_retries
+        self.base_delay = base_delay
+
+    async def send_webhook(self, url: str, payload: Dict, headers: Dict = None) -> aiohttp.ClientResponse:
+        if headers is None:
+            headers = {}
+        
+        async def _send():
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    url,
+                    json=payload,
+                    headers={'Content-Type': 'application/json', **headers}
+                ) as response:
+                    if not response.ok:
+                        raise Exception(f"Webhook failed: {response.status} {response.reason}")
+                    return response
+
+        return await retry_api_call(_send, self.max_retries)
+
+    async def process_webhook_event(self, event: Dict) -> Dict:
+        try:
+            # Process the webhook event
+            print(f"Processing webhook event: {event['type']}")
+            
+            # Your webhook processing logic here
+            await self.handle_event(event)
+            
+            return {"success": True, "eventId": event["id"]}
+        except Exception as error:
+            print(f"Webhook processing failed: {error}")
+            raise error
+
+    async def handle_event(self, event: Dict) -> None:
+        # Implement your webhook event handling logic
+        event_type = event.get("type")
+        if event_type == "patient.created":
+            # Handle patient creation
+            pass
+        elif event_type == "enrollment.updated":
+            # Handle enrollment update
+            pass
+        else:
+            print(f"Unknown event type: {event_type}")
+
+# Usage example
+webhook_handler = WebhookRetryHandler()
+await webhook_handler.process_webhook_event({
+    "id": "evt_123",
+    "type": "patient.created",
+    "data": {"patientId": "pat_456"}
+})
+```
+</CodeGroup>
+
+
+## Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="API Keys" icon="key">
+    - Store API keys securely (environment variables)  
+    - Rotate keys regularly  
+    - Never commit keys to version control
+  </Card>
+  <Card title="Data Privacy" icon="shield">
+    - Encrypt sensitive data in transit  
+    - Follow HIPAA guidelines for patient data  
+    - Implement proper access controls
+  </Card>
+</CardGroup>
+
+## Testing Your Integration
+
+### Unit Testing
+
+<CodeGroup>
+```javascript JavaScript
+// Example test using Jest
+describe('Patient API', () => {
+  test('should create patient successfully', async () => {
+    const patientData = {
+      email: 'test@example.com',
+      first_name: 'John',
+      last_name: 'Doe',
+      // ... other required fields
+    };
+    
+    const result = await createPatient(patientData);
+    expect(result.success).toBe(true);
+    expect(result.data.id).toBeDefined();
+  });
+});
+```
+
+```python Python
+# Example test using pytest
+import pytest
+from unittest.mock import patch, Mock
+
+def test_create_patient_successfully():
+    patient_data = {
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        # ... other required fields
+    }
+    
+    with patch('your_module.create_patient') as mock_create:
+        mock_create.return_value = {
+            'success': True,
+            'data': {'id': '12345'}
+        }
+        
+        result = create_patient(patient_data)
+        assert result['success'] is True
+        assert result['data']['id'] is not None
+```
+</CodeGroup>
+
+### Integration Testing
+
+Use our development tools to test with realistic data:
+
+```bash
+# Seed test patients
+curl -X POST "https://partners-api-sigma.vercel.app/patients/seed?count=5" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# Reset data after testing
+curl -X POST "https://partners-api-sigma.vercel.app/patients/reset" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+## Support & Resources
+
+<CardGroup cols={3}>
+  <Card title="OpenLoop Health" icon="globe" href="https://openloophealth.com">
+    Learn more about our platform and services
+  </Card>
+  <Card title="Contact Support" icon="envelope" href="https://openloophealth.com/contact">
+    Get help from our technical team
+  </Card>
+  <Card title="OpenAPI Spec" icon="code" href="/api-reference/openapi.json">
+    Download the complete API specification
+  </Card>
+</CardGroup>

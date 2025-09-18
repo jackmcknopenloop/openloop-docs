@@ -1,0 +1,14 @@
+---
+title: 'List Patient Enrollments'
+openapi: 'GET /patients/{patientId}/enrollments'
+---
+
+Retrieve all healthcare program enrollments for a specific patient from the OpenLoop Health Partners API. Shows current programs, status, and payment information.
+
+**Enrollment Statuses:**
+- `active` - Patient can access services
+- `in_review` - Enrollment being processed
+- `disabled` - Enrollment inactive/suspended
+
+See [Data Standards](/api-reference/data-standards) for date formatting and status validation rules.
+

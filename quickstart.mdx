@@ -3,9 +3,9 @@ title: 'Quickstart'
 description: 'Get up and running with the OpenLoop Partners API in minutes'
 ---
 
-# Quick Start Guide
+# Your First Integration in 10 Minutes
 
-Welcome to the OpenLoop Partners API! This guide will have you integrated and sending your first patient referrals in under 10 minutes.
+Ready to transform your practice? This guide will have you connected and referring your first patient to specialized care in under 10 minutes.
 
 ## What You'll Need
 
@@ -18,22 +18,41 @@ Welcome to the OpenLoop Partners API! This guide will have you integrated and se
 Let's start by checking that your API credentials are working:
 
 ```bash
+# Production
 curl -H "x-api-key: YOUR_API_KEY" \
      https://partners-api-sigma.vercel.app/health
+
+# Staging (for testing)
+curl -H "x-api-key: YOUR_API_KEY" \
+     https://staging-partners-api-sigma.vercel.app/health
 ```
 
 <CodeGroup>
 ```bash cURL
+# Production
 curl -H "x-api-key: YOUR_API_KEY" \
      https://partners-api-sigma.vercel.app/health
+
+# Staging
+curl -H "x-api-key: YOUR_API_KEY" \
+     https://staging-partners-api-sigma.vercel.app/health
 ```
 
 ```javascript JavaScript
+// Production
 const response = await fetch('https://partners-api-sigma.vercel.app/health', {
   headers: {
     'x-api-key': 'YOUR_API_KEY'
   }
 });
+
+// Staging
+const response = await fetch('https://staging-partners-api-sigma.vercel.app/health', {
+  headers: {
+    'x-api-key': 'YOUR_API_KEY'
+  }
+});
+
 const data = await response.json();
 console.log(data);
 ```
@@ -41,10 +60,18 @@ console.log(data);
 ```python Python
 import requests
 
+# Production
 response = requests.get(
     'https://partners-api-sigma.vercel.app/health',
     headers={'x-api-key': 'YOUR_API_KEY'}
 )
+
+# Staging
+response = requests.get(
+    'https://staging-partners-api-sigma.vercel.app/health',
+    headers={'x-api-key': 'YOUR_API_KEY'}
+)
+
 print(response.json())
 ```
 </CodeGroup>
