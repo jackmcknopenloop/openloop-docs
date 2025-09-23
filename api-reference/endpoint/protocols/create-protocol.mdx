@@ -1,0 +1,17 @@
+---
+title: 'Create Protocol'
+openapi: 'POST /protocols'
+---
+
+Create a new protocol in the OpenLoop Health Partners API. Protocols define enrollment workflows and can map to single programs (standard) or multiple programs (custom).
+
+**Required Fields:**
+- `name` - Protocol name
+- `program_ids` - Array of program IDs to associate with this protocol
+
+**Optional Fields:**
+- `description` - Protocol description
+- `intake_form_metadata` - Form configuration for patient intake
+- `is_standard` - Whether this is a standard (1:1) or custom (N:1) protocol
+
+See [Data Standards](/api-reference/data-standards) for formatting rules and validation patterns.
