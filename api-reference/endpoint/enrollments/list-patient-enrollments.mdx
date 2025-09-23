@@ -1,14 +1,16 @@
 ---
-title: 'List Patient Enrollments'
+title: 'List Patient Protocol Enrollments'
 openapi: 'GET /patients/{patientId}/enrollments'
 ---
 
-Retrieve all program enrollments for a specific patient from the OpenLoop Health Partners API. Shows current programs, status, and payment information.
+Retrieve all protocol enrollments for a specific patient from the OpenLoop Health Partners API. Each protocol enrollment automatically manages the underlying program enrollments.
 
-**Enrollment Statuses:**
-- `active` - Patient can access services
-- `in_review` - Enrollment being processed
-- `disabled` - Enrollment inactive/suspended
+**Key Features:**
+- View all protocol enrollments for a patient
+- See associated program enrollments created by each protocol
+- Access enrollment status and metadata
 
-See [Data Standards](/api-reference/data-standards) for date formatting and status validation rules.
+**How It Works:**
+- **Protocol Enrollments**: High-level enrollment in a protocol
+- **Program Enrollments**: Individual program enrollments created automatically by protocols
 

@@ -45,19 +45,11 @@
             ]
           },
           {
-            "group": "Enrollments",
+            "group": "Protocol Enrollments",
             "pages": [
               "api-reference/endpoint/enrollments/list-patient-enrollments",
               "api-reference/endpoint/enrollments/create-patient-protocol-enrollment",
-              "api-reference/endpoint/enrollments/create-patient-enrollment",
               "api-reference/endpoint/enrollments/reactivate-patient-enrollment"
-            ]
-          },
-          {
-            "group": "System",
-            "pages": [
-              "api-reference/endpoint/system/api-info",
-              "api-reference/endpoint/system/health"
             ]
           },
           {
@@ -76,6 +68,13 @@
             "pages": [
               "api-reference/endpoint/admin/reset-database",
               "api-reference/endpoint/admin/seed-database"
+            ]
+          },
+          {
+            "group": "System",
+            "pages": [
+              "api-reference/endpoint/system/api-info",
+              "api-reference/endpoint/system/health"
             ]
           },
           {
