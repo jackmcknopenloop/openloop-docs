@@ -33,8 +33,7 @@
             "pages": [
               "api-reference/endpoint/patients/list-patients",
               "api-reference/endpoint/patients/create-patient",
-              "api-reference/endpoint/patients/get-patient",
-              "api-reference/endpoint/patients/update-patient"
+              "api-reference/endpoint/patients/get-patient"
             ]
           },
           {
@@ -54,16 +53,30 @@
           {
             "group": "System",
             "pages": [
-              "api-reference/endpoint/system/health",
-              "api-reference/endpoint/system/webhook"
+              "api-reference/endpoint/system/health"
+            ]
+          },
+          {
+            "group": "Protocols",
+            "pages": [
+              "api-reference/endpoint/protocols/list-protocols",
+              "api-reference/endpoint/protocols/create-protocol",
+              "api-reference/endpoint/protocols/get-protocol",
+              "api-reference/endpoint/protocols/get-protocols-by-program"
+            ]
+          },
+          {
+            "group": "Admin",
+            "pages": [
+              "api-reference/endpoint/admin/reset-database",
+              "api-reference/endpoint/admin/seed-database"
             ]
           },
           {
             "group": "Development",
             "pages": [
               "api-reference/endpoint/development/seed-patients",
-              "api-reference/endpoint/development/reset-patients",
-              "api-reference/endpoint/development/seed-patient-enrollments"
+              "api-reference/endpoint/development/reset-patients"
             ]
           }
         ]

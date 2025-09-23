@@ -1,0 +1,21 @@
+---
+title: 'Seed Database'
+openapi: 'POST /admin/seed'
+---
+
+Populate the database with sample data for testing and development purposes. Creates patients, protocols, and enrollments based on the specified parameters.
+
+**Parameters:**
+- `count` - Number of patients to create (default: 10)
+- `sample` - Whether to create sample data with protocols (default: true)
+
+**Response Includes:**
+- Number of protocols created
+- Number of patients created
+- Number of enrollments created
+- Number of programs available
+
+**Use Cases:**
+- Development environment setup
+- Testing with realistic data
+- Demonstrations and demos
