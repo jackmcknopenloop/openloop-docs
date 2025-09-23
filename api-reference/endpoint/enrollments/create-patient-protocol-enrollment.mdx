@@ -1,0 +1,21 @@
+---
+title: 'Create Patient Protocol Enrollment'
+openapi: 'POST /patients/{patientId}/enrollments'
+---
+
+Enroll a patient in a protocol via the OpenLoop Health Partners API. This creates a protocol enrollment that automatically manages the underlying program enrollments.
+
+**Required Fields:**
+- `protocol_id` - Protocol ID to enroll in
+- `stripe_customer_id` - Stripe customer ID for billing
+- `stripe_product_id` - Stripe product ID for the protocol
+
+**How It Works:**
+1. Patient is enrolled in the specified protocol
+2. System automatically creates individual program enrollments based on the protocol's program associations
+3. Returns protocol enrollment details and count of program enrollments created
+
+**Benefits:**
+- Simplified enrollment process
+- Automatic program enrollment management
+- Consistent billing and status tracking

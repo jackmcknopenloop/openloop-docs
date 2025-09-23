@@ -33,7 +33,9 @@
             "pages": [
               "api-reference/endpoint/patients/list-patients",
               "api-reference/endpoint/patients/create-patient",
-              "api-reference/endpoint/patients/get-patient"
+              "api-reference/endpoint/patients/get-patient",
+              "api-reference/endpoint/patients/update-patient",
+              "api-reference/endpoint/patients/delete-patient"
             ]
           },
           {
@@ -46,6 +48,7 @@
             "group": "Enrollments",
             "pages": [
               "api-reference/endpoint/enrollments/list-patient-enrollments",
+              "api-reference/endpoint/enrollments/create-patient-protocol-enrollment",
               "api-reference/endpoint/enrollments/create-patient-enrollment",
               "api-reference/endpoint/enrollments/reactivate-patient-enrollment"
             ]
@@ -53,6 +56,7 @@
           {
             "group": "System",
             "pages": [
+              "api-reference/endpoint/system/api-info",
               "api-reference/endpoint/system/health"
             ]
           },
@@ -62,6 +66,8 @@
               "api-reference/endpoint/protocols/list-protocols",
               "api-reference/endpoint/protocols/create-protocol",
               "api-reference/endpoint/protocols/get-protocol",
+              "api-reference/endpoint/protocols/update-protocol",
+              "api-reference/endpoint/protocols/delete-protocol",
               "api-reference/endpoint/protocols/get-protocols-by-program"
             ]
           },
